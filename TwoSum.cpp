@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
+#include <string>
 
 std::pair<int, int> twoSumBruteForce(
     const std::vector<int>& nums,
@@ -37,13 +38,45 @@ std::pair<int, int> twoSumHash(
     return {-1, -1};
 }
 
-int main() {
-    std::vector<int> nums = {
-        15, 4, 18, 8, 19, 22, 24, 59,
-        59, 20, 18, 12, 36, 42, 9
-    };
+void printResult(
+    const std::string& method,
+    const std::vector<int>& nums,
+    int target,
+    std::pair<int, int> result
+) {
+    bool valid =
+        result.first >= 0 &&
+        result.second >= 0 &&
+        result.first != result.second &&
+        result.first < nums.size() &&
+        result.second < nums.size() &&
+        nums[result.first] + nums[result.second] == target;
 
-    int target = 24;
+    std::cout << method << " indices: ["
+              << result.first << ", "
+              << result.second << "]"
+              << std::endl;
+
+    if (valid) {
+        std::cout << method << " values: ["
+                  << nums[result.first] << ", "
+                  << nums[result.second] << "]"
+                  << std::endl;
+    }
+
+    std::cout << method << " valid: "
+              << std::boolalpha << valid
+              << std::endl;
+}
+
+void runTest(
+    const std::string& testName,
+    const std::vector<int>& nums,
+    int target
+) {
+    std::cout << "\n" << testName
+              << " — target: " << target
+              << std::endl;
 
     std::pair<int, int> bruteResult =
         twoSumBruteForce(nums, target);
@@ -51,21 +84,51 @@ int main() {
     std::pair<int, int> hashResult =
         twoSumHash(nums, target);
 
-    std::cout << "Brute-force indices: ["
-          << bruteResult.first << ", "
-          << bruteResult.second << "]" << std::endl;
+    printResult(
+        "Brute force",
+        nums,
+        target,
+        bruteResult
+    );
 
-    std::cout << "Brute-force values: ["
-          << nums[bruteResult.first] << ", "
-          << nums[bruteResult.second] << "]" << std::endl;
+    printResult(
+        "Hash table",
+        nums,
+        target,
+        hashResult
+    );
+}
 
-    std::cout << "Hash-table indices: ["
-          << hashResult.first << ", "
-          << hashResult.second << "]" << std::endl;
+int main() {
+    runTest(
+        "Required test",
+        {15, 4, 18, 8, 19, 22, 24, 59, 59, 20, 18, 12, 36, 42, 9},
+        24
+    );
 
-    std::cout << "Hash-table values: ["
-          << nums[hashResult.first] << ", "
-          << nums[hashResult.second] << "]" << std::endl;
+    runTest(
+        "Test 2: Basic pair",
+        {2, 7, 11, 15},
+        9
+    );
+
+    runTest(
+        "Test 3: Pair later in vector",
+        {3, 2, 4},
+        6
+    );
+
+    runTest(
+        "Test 4: Duplicate values",
+        {3, 3},
+        6
+    );
+
+    runTest(
+        "Test 5: Negative number",
+        {-5, 2, 9, 1},
+        4
+    );
 
     return 0;
 }
